@@ -312,3 +312,35 @@ php?Selection=2 UNION SELECT table_schema,column_name,table_name FROM informatio
 
 4. Craft Queries
 php?Selection=2 UNION SELECT column_name,column_name,column_name FROM database.table
+
+==============================================================================================================================================================================================================================
+
+
+
+
+
+
+REVERSE ENGINEERING
+==============================================================================================================================================================================================================================
+
+step 1: STATIC ANALYSIS
+- strings.exe .\demoblahblahblah.exe
+- strings.exe -a -nobanner <filepath> | findstr /i enter
+- strings.exe -a -n 5 -nobanner .\demo1_new.exe | select -first 10
+- strings.exe -a -n 7 -nobanner .\demo1_new.exe | select -last 10
+
+Behavioral Analysis
+//run it
+
+
+1. open ghidra and start new project
+2. load your executable
+3.
+
+
+
+
+
+
+
+
