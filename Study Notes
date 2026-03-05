@@ -376,6 +376,8 @@ Dynamic Analysis Part II
 - find offset
 offset ="A" (in script created earlier)
 - ./func <<<$(python ben.py)
-- 
-
+- pinpoint or find EIP using wiremask
+- run script in gdb
+- run <<<(python ben.py) ----> if it says file cant load, then try <file func>
+- Look at EIP ---> go back to ben.py ---> change offset ---> paste the offset from wiremask ---> rerun script ---> copy and paste that EIP into wiremask ---> find the offset.
 
