@@ -338,9 +338,44 @@ Behavioral Analysis
 3.
 
 
+==============================================================================================================================================================================================================================
 
 
+DAY 7
 
+Exploit Development 
 
+LINUX:
+-------
+ Static Analysis
+- file <filename>
+- strings func | more
+
+Behavioral Analysis
+- run it
+- change perms if necessary (gotta see if its executable)   --> chmod +x
+- then try and run it ---> ./func
+
+Dynamic Analysis
+- command substitution ---> ./func $(echo "12345") ----> allows us to pass 12345 as a parameter
+- ./func <<<$(echo "12345") ---> simulates user input
+- command substitution example: ls (cat example.txt)
+
+Investigate/Research
+- gdb ./func
+  gdb cmds: "shell" --> goes back to linux shell ---> "exit" ---> goes back to gdb ---> "quit" ---> quits the gdb session
+- file to check if there is a file, load a file by typing "file ./func"
+
+Dissasemmbly
+- disass main or pdisass main (run pdisass again on the result)
+- pdisass getuserinput
+- "what is the vulnerable function in the func file?" ---> you will get this answer after running pdisass cmds, answer will be the vulnerable one highlighted in red. (answer will be just the name, not including the @plt).
+
+Dynamic Analysis Part II
+        FUZZING
+- find offset
+offset ="A" (in script created earlier)
+- ./func <<<$(python ben.py)
+- 
 
 
