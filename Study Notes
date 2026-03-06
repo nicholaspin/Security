@@ -434,3 +434,24 @@ HELPFULL COMMAND: scp -P 6767 /home/student/Downloads/ben.py comrade@127.0.0.1:/
 0xf7f72c6b
 0xf7f72df7
 
+
+=============================================================================================================================================================================================================================
+
+Day 8
+
+Windows Exploit Development
+
+1. Static Analysis
+- cd C:\Users\Student\502 ---> go to location of directory
+- strings.exe -a -nobanner .\vulnserver.exe
+
+2. Behavioral Analysis
+- Run it
+- get-process | findstr /i ---> pay attention to id field. to locate id of the exe
+- netstat -anop tcp | findstr 4000 --> (use id you identified by running the get-process above). When you run this you should see port 9999
+
+3. Dynamic Analysis
+- Run Immunity as admin
+- File > Open > Go To Directory > Open Exe
+- Once you have it open in immunity, rewind ---> then play to make sure its running ---> go back to script and set the buf. buf += "A" * 3500 ---> run script
+- Go back to Immunity ---> look at EIP ---> Go to WireMask ---> match whatever you put into your script for the first buf as the input for WireMask ---> go back to script and make new buf with the bunch of pasted text.
