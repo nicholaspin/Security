@@ -455,3 +455,45 @@ Windows Exploit Development
 - File > Open > Go To Directory > Open Exe
 - Once you have it open in immunity, rewind ---> then play to make sure its running ---> go back to script and set the buf. buf += "A" * 3500 ---> run script
 - Go back to Immunity ---> look at EIP ---> Go to WireMask ---> match whatever you put into your script for the first buf as the input for WireMask ---> go back to script and make new buf with the bunch of pasted text.
+
+
+==============================================================================================================================================================================================================================
+
+
+Day 9
+
+######################################################## DLL SEARCH ORDER ###############################################################3
+
+Executables Check the following location in (successive order)
+- HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\KnownDLLS
+- The directory the Application was run from
+- The directory specified in in the C+ function GetSystemDirectory()
+- The directory specified in the C+ function GetWindowsDirectory()
+- The current directory
+
+Important Microsoft Event IDs
+
+4624/4625  Successful/failed login
+4720  Account created
+4672  Administrative user logged on
+7045  Service created
+
+
+#############################  UAC DEMO  ###########################
+
+Check Registry ---> Regedit
+check persistance areas. ---> HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WIndows\CurrentVersion\Run. HKCU RUN and RUNONCE locations as well.
+
+Check Services
+--> looking for services with no description or abscure spelling. --> investigate services with no description. --> right click that service and go to properties. that will give you path to executables.
+--> make sure when you are in file explorer. you look for hidden files in the directory. --> top right click the down arrow --> go to view --> and check hidden files.
+
+! SYSTEM ACCESS AND DEFEATING PROTECTION
+
+--> Go to task scheduler --> look at triggers --> look what actions are prompted by those triggers. (Can dig into directory that is set to run Upload/replace DLL's or EXE's)
+
+!! AUDIT LOGGING !!
+auditpol /get /category:*
+
+
+
